@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from connect import add_user, read_usuarios,init_db,get_user,update_person
+from connect import add_user, read_usuarios,init_db,get_user,update_person,delete_user
 from usuario import Usuario
 
 
@@ -80,15 +80,7 @@ class App:
     def ver_usuarios(self):
         st.subheader("Lista de usuarios")
         lista_usuarios = read_usuarios()
-        df = pd.DataFrame(lista_usuarios, columns=[
-                "ID", 
-                "Nombre", 
-                "Apellido", 
-                "Correo electrónico", 
-                "Contraseña",
-                "Fecha de registro",
-                "Número de teléfono" 
-        ])
+        df = pd.DataFrame(lista_usuarios, columns=COLS_FORM)
         st.dataframe(df,width=2000,hide_index=True)
         
         with st.expander("Cantidad usuarios"):
@@ -98,6 +90,22 @@ class App:
             
     def borrar_usuarios(self):
         st.subheader("Borrar usuarios")
+        st.write("Selecciona el ID del usuario que deseas borrar.")
+        lista_usuarios = read_usuarios()
+        df = pd.DataFrame(lista_usuarios, columns=COLS_FORM)
+        with st.expander("Lista de usuarios"):
+            st.dataframe(df,width=2000,hide_index=True)
+        selected_user = st.selectbox("Selecciona un usuario",df["ID"])
+        btn_update = st.button("Borrar")
+        
+        if btn_update:
+            if delete_user(selected_user):
+                st.success("Usuario borrado exitosamente.")
+                st.balloons()
+            else:
+                st.error("Error al borrar usuario.", icon="🚨")
+        
+        
     def actualizar_usuarios(self):
         st.subheader("Actualizar usuarios")
         lista_usuarios = read_usuarios()

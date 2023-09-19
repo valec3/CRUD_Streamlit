@@ -126,3 +126,20 @@ def update_person(user):
     finally:
         cnx.close()
     
+def delete_user(id):
+    try:
+        
+        cnx = connect()
+        cursor = cnx.cursor()
+        SQL_COMMAND = """
+            DELETE FROM USUARIOS WHERE USER_ID = %s;
+        """
+        cursor.execute(SQL_COMMAND, (id,))
+        cnx.commit()
+        return True
+    except Exception as e:
+        print("Error al eliminar usuario: {}".format(e))
+        return False
+    finally:
+        cnx.close()
+    
