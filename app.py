@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
-from connect import add_user, read_usuarios,init_db,get_user
+from connect import add_user, read_usuarios,init_db,get_user,update_person
 from usuario import Usuario
-import plotly.express as px
 
 
 COLS_FORM = [
@@ -39,7 +38,16 @@ class App:
         self.menu[self.pagina_actual]()
 
     def mostrar_inicio(self):
-        st.subheader("Bienvenido a la página de inicio. Esta es la página principal de la aplicación.")
+        st.title("Bienvenido a la Aplicación CRUD")
+        st.write("Esta es una sencilla aplicación CRUD (Crear, Leer, Actualizar, Borrar) creada con Streamlit.")
+        st.write("Aquí puedes realizar operaciones básicas de gestión de datos, como agregar, ver, actualizar y eliminar registros.")
+
+        st.header("Instrucciones de Uso")
+        st.write("1. Utiliza el menú lateral izquierdo para navegar entre las opciones.")
+        st.write("2. Selecciona 'Crear' para agregar un nuevo registro.")
+        st.write("3. Selecciona 'Ver' para ver los registros existentes.")
+        st.write("4. Selecciona 'Actualizar' para modificar registros existentes.")
+        st.write("5. Selecciona 'Borrar' para borrar registros.")
 
     def crear_usuario(self):
         
@@ -113,6 +121,14 @@ class App:
                     upd_contrasena_input = st.text_input(COLS_FORM[4], type="password",value=result_user[0][4])
 
                 btn_update = st.form_submit_button("Actualizar")
+            if btn_update:
+                user =(upd_nombre_input, upd_apellido_input, upd_correo_input, upd_telefono_input, upd_contrasena_input,selected_user)
+                st.write(user)
+                if update_person(user):
+                    st.success("Usuario actualizado exitosamente.")
+                    st.balloons()
+                else:
+                    st.error("Error al actualizar usuario.", icon="🚨")
         
 if __name__ == "__main__":
     init_db()

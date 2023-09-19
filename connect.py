@@ -102,3 +102,27 @@ def get_user(id):
     user = cursor.fetchall()
     cnx.close()
     return user
+
+def update_person(user):
+    try:
+        
+        cnx = connect()
+        cursor = cnx.cursor()
+        SQL_COMMAND = """
+            UPDATE USUARIOS SET 
+                NOMBRE = %s, 
+                APELLIDO = %s, 
+                CORREO_ELECTRONICO = %s, 
+                NUMERO_DE_TELEFONO = %s, 
+                CONTRASENA = %s
+            WHERE USER_ID = %s;
+        """
+        cursor.execute(SQL_COMMAND, user)
+        cnx.commit()
+        return True
+    except Exception as err:
+        print("Error al actualizar usuario: {}".format(err))
+        return False
+    finally:
+        cnx.close()
+    
