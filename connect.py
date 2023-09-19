@@ -4,7 +4,11 @@ def init_db():
     create_table()
     
 def create_db():
-    cnx = connect()
+    cnx = mysql.connector.connect(
+            host = "localhost",
+            user = "victor_stpy",
+            password = "1234",
+        )
     cursor = cnx.cursor()
     SQL_COMMAND = """
         CREATE DATABASE IF NOT EXISTS crud_stpy;

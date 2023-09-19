@@ -115,5 +115,6 @@ class App:
                 btn_update = st.form_submit_button("Actualizar")
         
 if __name__ == "__main__":
+    init_db()
     app = App()
     app.run()
