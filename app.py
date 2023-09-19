@@ -1,12 +1,19 @@
 import streamlit as st
-
-# Store the initial value of widgets in session state
-if "visibility" not in st.session_state:
-    st.session_state.visibility = "visible"
-    st.session_state.disabled = False
-
+import pandas as pd
+from connect import add_user, read_usuarios,init_db,get_user
+from usuario import Usuario
+import plotly.express as px
 
 
+COLS_FORM = [
+                "ID", 
+                "Nombre", 
+                "Apellido", 
+                "Correo electrónico", 
+                "Contraseña",
+                "Fecha de registro",
+                "Número de teléfono" 
+        ]
 class App:
     def __init__(self):
         self.titulo = "Aplicación CRUD con Streamlit"
@@ -19,9 +26,10 @@ class App:
             
         }
         self.pagina_actual = "Inicio"
+        init_db()
 
     def run(self):
-        st.set_page_config(page_title=self.titulo)
+        st.set_page_config(page_title=self.titulo, page_icon=":shark:", layout="wide")
         st.title(self.titulo)
 
         # Menú lateral
@@ -37,43 +45,74 @@ class App:
         
         st.subheader("Crear usuario.")
         user = st.form("persona_info")
-        col1, col2 = st.columns(2)
-        with col1:
-            nombre_input = user.text_input(
-                "Nombre",
-                label_visibility=st.session_state.visibility,
-                disabled=st.session_state.disabled,
-            )
-            apellido_input = user.text_input(
-                "Apellido",
-                label_visibility=st.session_state.visibility,
-            )
-            correo_input = user.text_input(
-                "Correo electrónico",
-                "example@gmail.com",
-                key="placeholder",
-            )
-            
-            
-        with col2:
-            telefono_input = user.text_input(
-                "Número de teléfono",
-                label_visibility=st.session_state.visibility,
-            )
-            contrasena_input = user.text_input(
-                "Contraseña",
-                label_visibility=st.session_state.visibility,
-            )
-        btn_crear = user.form_submit_button("Crear")
 
+        with user:
+            col1, col2 = st.columns(2)
 
+            with col1:
+                nombre_input = st.text_input(COLS_FORM[1])
+                apellido_input = st.text_input(COLS_FORM[2])
+                correo_input = st.text_input(COLS_FORM[3], "example@gmail.com", key="placeholder")
+
+            with col2:
+                telefono_input = st.text_input(COLS_FORM[6])
+                contrasena_input = st.text_input(COLS_FORM[4], type="password")
+
+            btn_crear = st.form_submit_button("Crear")
+        
+        if btn_crear:
+            user =(nombre_input, apellido_input, correo_input, telefono_input, contrasena_input)
+            if add_user(user):
+                st.success("Usuario creado exitosamente.")
+                st.balloons()
+            else:
+                st.error("Error al crear usuario.", icon="🚨")
+                
+            
     def ver_usuarios(self):
         st.subheader("Lista de usuarios")
+        lista_usuarios = read_usuarios()
+        df = pd.DataFrame(lista_usuarios, columns=[
+                "ID", 
+                "Nombre", 
+                "Apellido", 
+                "Correo electrónico", 
+                "Contraseña",
+                "Fecha de registro",
+                "Número de teléfono" 
+        ])
+        st.dataframe(df,width=2000,hide_index=True)
         
+        with st.expander("Cantidad usuarios"):
+            st.title(df.shape[0])
+        with st.expander("Ver JSON"):
+            st.json(lista_usuarios)
+            
     def borrar_usuarios(self):
         st.subheader("Borrar usuarios")
     def actualizar_usuarios(self):
         st.subheader("Actualizar usuarios")
+        lista_usuarios = read_usuarios()
+        df = pd.DataFrame(lista_usuarios, columns=COLS_FORM)
+        with st.expander("Lista de usuarios"):
+            st.dataframe(df,width=2000,hide_index=True)
+        selected_user = st.selectbox("Selecciona un usuario",df["ID"])
+        result_user = get_user(selected_user)
+        if result_user:
+            user = st.form("persona_info")
+            with user:
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    upd_nombre_input = st.text_input(COLS_FORM[1],value=result_user[0][1])
+                    upd_apellido_input = st.text_input(COLS_FORM[2],value=result_user[0][2])
+                    upd_correo_input = st.text_input(COLS_FORM[3],value=result_user[0][3], key="placeholder")
+
+                with col2:
+                    upd_telefono_input = st.text_input(COLS_FORM[6],value=result_user[0][6])
+                    upd_contrasena_input = st.text_input(COLS_FORM[4], type="password",value=result_user[0][4])
+
+                btn_update = st.form_submit_button("Actualizar")
         
 if __name__ == "__main__":
     app = App()

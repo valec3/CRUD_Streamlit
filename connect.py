@@ -1,4 +1,18 @@
 import mysql.connector
+def init_db():
+    create_db()
+    create_table()
+    
+def create_db():
+    cnx = connect()
+    cursor = cnx.cursor()
+    SQL_COMMAND = """
+        CREATE DATABASE IF NOT EXISTS crud_stpy;
+    """
+    cursor.execute(SQL_COMMAND)
+    cnx.commit()
+    cnx.close()
+    print("Base de datos creada exitosamente.")
 
 def connect():
     """ Connect to MySQL database """
@@ -39,4 +53,48 @@ def create_table():
     cnx.close()
     print("Tabla creada exitosamente.")
     
+def add_user(user):
+    try:
+        cnx = connect()
+        cursor = cnx.cursor()
+        SQL_COMMAND = """
+            INSERT INTO USUARIOS (
+                NOMBRE, 
+                APELLIDO, 
+                CORREO_ELECTRONICO, 
+                NUMERO_DE_TELEFONO,
+                CONTRASENA,
+                FECHA_DE_REGISTRO 
+            )
+            VALUES (%s, %s, %s, %s, %s, NOW());
+        """
+        cursor.execute(SQL_COMMAND, user)
+        print("Usuario agregado exitosamente.")
+        return True
+    except Exception as err:
+        print("Error al agregar usuario: {}".format(err))
+        return False
+    finally:
+        cnx.commit()
+        cnx.close()
 
+def read_usuarios():
+    cnx = connect()
+    cursor = cnx.cursor()
+    SQL_COMMAND = """
+        SELECT * FROM USUARIOS;
+    """
+    cursor.execute(SQL_COMMAND)
+    usuarios = cursor.fetchall()
+    cnx.close()
+    return usuarios
+def get_user(id):
+    cnx = connect()
+    cursor = cnx.cursor()
+    SQL_COMMAND = """
+        SELECT * FROM USUARIOS WHERE USER_ID = %s;
+    """
+    cursor.execute(SQL_COMMAND, (id,))
+    user = cursor.fetchall()
+    cnx.close()
+    return user

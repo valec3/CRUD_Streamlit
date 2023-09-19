@@ -1,3 +1,7 @@
+-- Crear base de datos y tabla de usuarios
+CREATE DATABASE crud_stpy;
+
+
 CREATE TABLE IF NOT EXISTS USUARIOS (
     USER_ID INT AUTO_INCREMENT PRIMARY KEY,
     NOMBRE VARCHAR(50) NOT NULL,
