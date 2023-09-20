@@ -1,17 +1,30 @@
 import mysql.connector
+
+# Configuracion para conectar a la base de datos de Railway
+CONFIG_MYSQL_DATABASE = {
+    'user': 'root',
+    'host': 'containers-us-west-53.railway.app',
+    'password': 'efbah3sHqS7v52nna7ln',
+    'database': 'railway',
+    'port': 5557
+}
+
+
 def init_db():
     create_db()
     create_table()
     
 def create_db():
     cnx = mysql.connector.connect(
-            host = "localhost",
-            user = "victor_stpy",
-            password = "1234",
+            host = CONFIG_MYSQL_DATABASE['host'],
+            user = CONFIG_MYSQL_DATABASE['user'],
+            password = CONFIG_MYSQL_DATABASE['password'],
+            database = CONFIG_MYSQL_DATABASE['database'],
+            port = CONFIG_MYSQL_DATABASE['port']
         )
     cursor = cnx.cursor()
     SQL_COMMAND = """
-        CREATE DATABASE IF NOT EXISTS crud_stpy;
+        CREATE DATABASE IF NOT EXISTS railway;
     """
     cursor.execute(SQL_COMMAND)
     cnx.commit()
@@ -23,10 +36,11 @@ def connect():
     cnx = None
     try:
         cnx = mysql.connector.connect(
-            host = "localhost",
-            user = "victor_stpy",
-            password = "1234",
-            database = "crud_stpy"
+            host = CONFIG_MYSQL_DATABASE['host'],
+            user = CONFIG_MYSQL_DATABASE['user'],
+            password = CONFIG_MYSQL_DATABASE['password'],
+            database = CONFIG_MYSQL_DATABASE['database'],
+            port = CONFIG_MYSQL_DATABASE['port']
         )
         if cnx.is_connected():
             print("Conexión exitosa a la base de datos.")
