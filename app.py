@@ -139,6 +139,5 @@ class App:
                     st.error("Error al actualizar usuario.", icon="🚨")
         
 if __name__ == "__main__":
-    init_db()
     app = App()
     app.run()
