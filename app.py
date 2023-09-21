@@ -64,7 +64,7 @@ class App:
 
             with col2:
                 telefono_input = st.text_input(COLS_FORM[6])
-                contrasena_input = st.text_input(COLS_FORM[4], type="password")
+                contrasena_input = st.text_input(COLS_FORM[4], type="password", help="Mínimo 8 caracteres")
 
             btn_crear = st.form_submit_button("Crear")
         
@@ -96,7 +96,9 @@ class App:
         with st.expander("Lista de usuarios"):
             st.dataframe(df,width=2000,hide_index=True)
         selected_user = st.selectbox("Selecciona un usuario",df["ID"])
-        btn_update = st.button("Borrar")
+        st.write("Información del usuario seleccionado")
+        st.dataframe(df[df["ID"]==selected_user],hide_index=True)
+        btn_update = st.button(" Borrar ")
         
         if btn_update:
             if delete_user(selected_user):
